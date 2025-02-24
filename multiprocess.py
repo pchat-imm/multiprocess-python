@@ -81,9 +81,6 @@ def peak_one_fshift(fshift_val, corr_ind, corr_val):
   print("fshift_corr: ", {fshift_val}, {fshift_NID2}, {fshift_corr_ind}, {fshift_corr_val})    
   return fshift_NID2, fshift_corr_ind, fshift_corr_val
 
-############################################################
-# ADDED DEFINITIONS
-############################################################
 def processing_fshift(fshift, sampleRate, carrier, waveform, refWaveforms, Queue):
     # print("input fshift: ", fshift)
     rxWaveformFreqCorrected = waveform_fshift(fshift, sampleRate, waveform)
@@ -92,17 +89,9 @@ def processing_fshift(fshift, sampleRate, carrier, waveform, refWaveforms, Queue
     fshift_NID2, fshift_corr_ind, fshift_corr_val = peak_one_fshift(fshift, temp_corr_ind, temp_corr_val)
 
     Queue.put((fshift, fshift_NID2, fshift_corr_ind, fshift_corr_val))
-
     # print(Queue.qsize())
 
     return fshift_NID2, fshift_corr_ind, fshift_corr_val
-
-# def get_queue(Queue):
-#     fshift_corr = []
-#     while not Queue.empty():
-#         fshift_corr.append(Queue.get())
-
-#     print("fshift_corr: ", fshift_corr)
 
 def get_all_fshift_corr(Queue):
     # '''currently get user_input through terminal, will need to change to subscribe mqtt topic and get message'''
@@ -122,11 +111,8 @@ def get_all_fshift_corr(Queue):
             "fshift_corr_ind": fshift_corr_ind,
             "fshift_corr_val": fshift_corr_val
         }
-
-    # Print all the correlated values
-    for key, value in fshift_corr.items():
-        print(f"{key}: {value}")
-        
+    # for key, value in fshift_corr.items():
+    #     print(f"{key}: {value}")
     return fshift_corr
 
 def max_fshift_corr(fshift_corr):
@@ -144,10 +130,10 @@ def max_fshift_corr(fshift_corr):
   return sel_fshift, sel_NID2, sel_corr_ind, sel_corr_val
 
 def process_max_corr(Queue):
-   fshift_corr = get_all_fshift_corr(Queue)
-   sel_fshift, sel_NID2, sel_corr_ind, sel_corr_val = max_fshift_corr(fshift_corr)
-
-   return sel_fshift, sel_NID2, sel_corr_ind, sel_corr_val
+  # get all fshift_corr from queue and select the max fshift_corr
+  fshift_corr = get_all_fshift_corr(Queue)
+  sel_fshift, sel_NID2, sel_corr_ind, sel_corr_val = max_fshift_corr(fshift_corr)
+  return sel_fshift, sel_NID2, sel_corr_ind, sel_corr_val
 
 
 if __name__ == "__main__":
@@ -170,10 +156,12 @@ if __name__ == "__main__":
 
     print("start process")
     fshifts = [0, 15000, 30000, 45000]
+    # fshifts and find fshift_corr
     p1 = Process(target=processing_fshift, args=(fshifts[0], sampleRate, carrier, waveform, refWaveforms, q))    
     p2 = Process(target=processing_fshift, args=(fshifts[1], sampleRate, carrier, waveform, refWaveforms, q))
     p3 = Process(target=processing_fshift, args=(fshifts[2], sampleRate, carrier, waveform, refWaveforms, q))
     p4 = Process(target=processing_fshift, args=(fshifts[3], sampleRate, carrier, waveform, refWaveforms, q))
+    # find max fshift_corr
     p5 = Process(target=process_max_corr, args=(q,))
 
     p1.start()
@@ -186,9 +174,10 @@ if __name__ == "__main__":
     p3.join()
     p4.join()
 
+    # if collect enough fshift_corr in queue, start find the max fshift_corr
     if(q.qsize() == len(fshifts)):
-        p5.start()
-        p5.join()
+      p5.start()
+      p5.join()
       
 
 
