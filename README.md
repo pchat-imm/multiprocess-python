@@ -1,7 +1,7 @@
 # multiprocess-python
 current task
-- check if have error
-- later stream result with zmq
+- stream result with zmq (maybe run with ubuntu)-
+- (in case want to use bladerf windows) follow another markdown file
 
 result
 ```
