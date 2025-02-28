@@ -122,7 +122,7 @@ def receive_samples(sdr, rx_ch, num_samples):
 
 def process_transmit(sdr, tx_ch, center_freq, sample_rate, bandwidth, gain_tx, input_file):
     # set tx_sdr
-
+    waveform, num_samples
     
 
 if __name__ == "__main__":
