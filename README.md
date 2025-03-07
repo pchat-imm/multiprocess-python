@@ -3,9 +3,12 @@ current task
 - can receive signal
 next
 - make a tx and rx sdr
-
 - stream result with zmq (maybe run with ubuntu)-
 - (in case want to use bladerf windows) follow another markdown file
+
+general idea
+<img src = https://github.com/user-attachments/assets/d649d67e-a638-41c6-be69-30c61d00abcf>
+
 
 result
 ```
